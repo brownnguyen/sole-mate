@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Filter, Grid, List, ChevronDown } from "lucide-react";
+import Header from "@/components/Header";
 
 export default function MenPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -18,6 +19,8 @@ export default function MenPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <Header />
+      
       {/* Hero Banner */}
       <div className="bg-gray-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

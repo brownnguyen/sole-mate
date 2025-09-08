@@ -2,9 +2,14 @@
 import { useState, use } from "react";
 import { Heart, Share2, Star, Truck, RotateCcw, Shield, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import Header from "@/components/Header";
+import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
 
 export default function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
+  const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('black');
@@ -53,8 +58,59 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
     { id: 5, name: "Walking Shoes", price: 99.99, image: "🚶" }
   ];
 
+  const handleAddToCart = () => {
+    if (!selectedSize) {
+      alert('Please select a size');
+      return;
+    }
+
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      brand: product.brand,
+      price: product.price,
+      image: product.images[0],
+      size: selectedSize,
+      quantity: quantity
+    };
+
+    addToCart(cartItem);
+    alert(`Added ${quantity} ${product.name} (Size ${selectedSize}) to cart!`);
+  };
+
+  const handleWishlistToggle = () => {
+    const wishlistItem = {
+      id: product.id,
+      name: product.name,
+      brand: product.brand,
+      price: product.price,
+      image: product.images[0]
+    };
+
+    if (isInWishlist(product.id)) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(wishlistItem);
+    }
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: product.name,
+        text: `Check out this ${product.name} from ${product.brand}`,
+        url: window.location.href,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      alert('Product link copied to clipboard!');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
+      <Header />
+      
       {/* Breadcrumb */}
       <div className="bg-gray-50 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -195,15 +251,26 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
             {/* Add to Cart */}
             <div className="flex gap-4 mb-8">
               <button 
+                onClick={handleAddToCart}
                 disabled={!selectedSize}
-                className="flex-1 bg-blue-600 text-white py-4 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="flex-1 bg-blue-600 text-white py-4 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
               >
-                Add to Cart - ${(product.price * quantity).toFixed(2)}
+                {!selectedSize ? 'Select Size' : `Add to Cart - $${(product.price * quantity).toFixed(2)}`}
               </button>
-              <button className="p-4 border border-gray-300 rounded-lg hover:bg-gray-100">
-                <Heart className="h-6 w-6" />
+              <button 
+                onClick={handleWishlistToggle}
+                className={`p-4 border rounded-lg transition-colors ${
+                  isInWishlist(product.id) 
+                    ? 'border-red-300 bg-red-50 text-red-600' 
+                    : 'border-gray-300 hover:bg-gray-100'
+                }`}
+              >
+                <Heart className={`h-6 w-6 ${isInWishlist(product.id) ? 'fill-current' : ''}`} />
               </button>
-              <button className="p-4 border border-gray-300 rounded-lg hover:bg-gray-100">
+              <button 
+                onClick={handleShare}
+                className="p-4 border border-gray-300 rounded-lg hover:bg-gray-100"
+              >
                 <Share2 className="h-6 w-6" />
               </button>
             </div>

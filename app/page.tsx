@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart, Search, User, Heart } from "lucide-react";
 import { useCart } from '@/contexts/CartContext';
-
+import Header from "@/components/Header";
 export default function Home() {
   const { addToCart, getTotalItems } = useCart();
 
@@ -30,48 +30,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="border-b border-gray-200 sticky top-0 bg-white/95 backdrop-blur-sm z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex items-center">
-              <Link href="/">
-                <h1 className="text-2xl font-bold text-gray-900">SoleMate</h1>
-              </Link>
-            </div>
-            
-            {/* Navigation Links */}
-            <div className="hidden md:flex space-x-8">
-              <Link href="/men" className="text-gray-700 hover:text-gray-900">Men</Link>
-              <Link href="/women" className="text-gray-700 hover:text-gray-900">Women</Link>
-              <Link href="/kids" className="text-gray-700 hover:text-gray-900">Kids</Link>
-              <Link href="/sale" className="text-red-600 hover:text-red-700 font-medium">Sale</Link>
-            </div>
-            
-            {/* Search & Actions */}
-            <div className="flex items-center space-x-4">
-              <div className="hidden sm:flex items-center bg-gray-100 rounded-lg px-3 py-2 max-w-xs">
-                <Search className="h-4 w-4 text-gray-500 mr-2" />
-                <input 
-                  type="text" 
-                  placeholder="Search shoes..." 
-                  className="bg-transparent outline-none text-sm flex-1"
-                />
-              </div>
-              <Heart className="h-6 w-6 text-gray-700 hover:text-red-500 cursor-pointer" />
-              <User className="h-6 w-6 text-gray-700 hover:text-gray-900 cursor-pointer" />
-              <Link href="/cart" className="relative">
-                <ShoppingCart className="h-6 w-6 text-gray-700 hover:text-gray-900 cursor-pointer" />
-                {getTotalItems() > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {getTotalItems()}
-                  </span>
-                )}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-gray-900 to-gray-700 text-white">
@@ -83,7 +42,7 @@ export default function Home() {
                 <span className="text-blue-400"> Best Style</span>
               </h2>
               <p className="text-xl mb-8 text-gray-300">
-                Discover premium footwear that combines comfort, style, and quality. 
+                Discover premium footwear that combines comfort, style, and quality.
                 From casual sneakers to formal shoes, find your perfect match.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -144,7 +103,7 @@ export default function Home() {
               Discover our most popular shoes, carefully selected for style, comfort, and quality.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredProducts.map((product) => (
               <div key={product.id} className="group cursor-pointer">
@@ -157,7 +116,7 @@ export default function Home() {
                 <p className="text-gray-600 mb-2">Comfortable daily wear</p>
                 <div className="flex justify-between items-center">
                   <span className="text-xl font-bold text-gray-900">${product.price}</span>
-                  <button 
+                  <button
                     onClick={() => handleAddToCart(product)}
                     className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
                   >
@@ -178,8 +137,8 @@ export default function Home() {
             Subscribe to our newsletter for exclusive offers, new arrivals, and style tips.
           </p>
           <div className="max-w-md mx-auto flex gap-4">
-            <input 
-              type="email" 
+            <input
+              type="email"
               placeholder="Enter your email"
               className="flex-1 px-4 py-3 rounded-lg text-gray-900 outline-none"
             />
