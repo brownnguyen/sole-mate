@@ -2,13 +2,17 @@
 import Link from "next/link";
 import { useState, use } from "react";
 import { ShoppingCart, Search, User, Heart, Star, Plus, Minus, Truck, RotateCcw, Shield } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
+  
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  const resolvedParams = use(params);
+  const { addToCart, getTotalItems } = useCart();
 
   const product = {
     id: resolvedParams.id,
@@ -35,8 +39,35 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     { id: 3, user: "Mike R.", rating: 5, comment: "Best sneakers I've ever owned. Highly recommend!", date: "1 month ago" }
   ];
 
+  const handleAddToCart = () => {
+    if (!selectedSize) {
+      alert("Please select a size before adding to cart.");
+      return;
+    }
+
+    addToCart({
+      id: product.id,
+      name: product.name,
+      brand: product.brand,
+      price: product.price,
+      image: product.images[0],
+      size: selectedSize,
+      quantity: quantity,
+    });
+
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
+  };
+
   return (
     <div className="min-h-screen bg-white">
+      {/* Success Message */}
+      {showSuccessMessage && (
+        <div className="fixed top-20 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-in">
+          ✓ Added to cart successfully!
+        </div>
+      )}
+
       {/* Navigation */}
       <nav className="border-b border-gray-200 sticky top-0 bg-white/95 backdrop-blur-sm z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -65,7 +96,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <User className="h-6 w-6 text-gray-700 hover:text-gray-900 cursor-pointer" />
               <div className="relative">
                 <ShoppingCart className="h-6 w-6 text-gray-700 hover:text-gray-900 cursor-pointer" />
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {getTotalItems()}
+                </span>
               </div>
             </div>
           </div>
@@ -178,7 +211,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
             {/* Add to Cart */}
             <div className="flex gap-4 mb-8">
-              <button className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+              <button 
+                onClick={handleAddToCart}
+                disabled={!selectedSize}
+                className={`flex-1 py-3 rounded-lg font-medium transition-colors ${
+                  selectedSize 
+                    ? "bg-blue-600 text-white hover:bg-blue-700" 
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
                 Add to Cart
               </button>
               <button className="border border-gray-300 p-3 rounded-lg hover:bg-gray-50">

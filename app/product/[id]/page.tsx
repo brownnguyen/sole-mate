@@ -1,9 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, use } from "react";
 import { Heart, Share2, Star, Truck, RotateCcw, Shield, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
-export default function ProductDetail({ params }: { params: { id: string } }) {
+export default function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
+  
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('black');
   const [quantity, setQuantity] = useState(1);
@@ -11,7 +13,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const product = {
-    id: params.id,
+    id: resolvedParams.id,
     name: "Premium Athletic Running Shoes",
     brand: "Nike",
     price: 149.99,

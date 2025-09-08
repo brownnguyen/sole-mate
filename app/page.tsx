@@ -6,7 +6,7 @@ import { ShoppingCart, Search, User, Heart } from "lucide-react";
 import { useCart } from '@/contexts/CartContext';
 
 export default function Home() {
-  const { addItem, itemCount } = useCart();
+  const { addToCart, getTotalItems } = useCart();
 
   const featuredProducts = [
     { id: '1', name: 'Premium Sneaker 1', price: 89.99, image: '👟' },
@@ -16,11 +16,14 @@ export default function Home() {
   ];
 
   const handleAddToCart = (product: typeof featuredProducts[0]) => {
-    addItem({
+    addToCart({
       id: product.id,
       name: product.name,
+      brand: 'SoleMate',
       price: product.price,
       image: product.image,
+      size: '9', // Default size for quick add
+      quantity: 1,
     });
   };
 
@@ -59,9 +62,9 @@ export default function Home() {
               <User className="h-6 w-6 text-gray-700 hover:text-gray-900 cursor-pointer" />
               <Link href="/cart" className="relative">
                 <ShoppingCart className="h-6 w-6 text-gray-700 hover:text-gray-900 cursor-pointer" />
-                {itemCount > 0 && (
+                {getTotalItems() > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {itemCount}
+                    {getTotalItems()}
                   </span>
                 )}
               </Link>
